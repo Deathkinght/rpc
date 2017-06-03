@@ -3,6 +3,7 @@ package com.qiyi.rpc.spring.schema;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.AnnotatedGenericBeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
@@ -15,6 +16,7 @@ import com.qiyi.rpc.protocol.context.ClientBeanContext;
 import com.qiyi.rpc.protocol.context.BeanNodeWrapperDto;
 import com.qiyi.rpc.protocol.context.server.ServerBeanContext;
 import com.qiyi.rpc.registry.zookeeper.ZkRegistry;
+import com.qiyi.rpc.spring.QiyiApplicationListener;
 import com.qiyi.rpc.spring.bean.ClientFactoryBean;
 import com.qiyi.rpc.spring.bean.ConfigFactoryBean;
 import com.qiyi.rpc.spring.bean.ServerFactoryBean;
@@ -94,6 +96,10 @@ public class QiyiBeanParser extends AbstractSimpleBeanDefinitionParser {
 			logger.debug("get retryMaxRetries:{} from xml",retryMaxRetriesStr);
 			
 			setConfig(address, sessionTimeoutMsStr, retrySleepTimeMsStr, retryMaxRetriesStr);
+			
+			/**手动注册listener**/
+			parserContext.getRegistry().registerBeanDefinition("qiyiApplicationListener", new AnnotatedGenericBeanDefinition(QiyiApplicationListener.class));
+			
 			
 		}else 	if (ClientFactoryBean.class.equals(cla)) {
 			/**客户端**/

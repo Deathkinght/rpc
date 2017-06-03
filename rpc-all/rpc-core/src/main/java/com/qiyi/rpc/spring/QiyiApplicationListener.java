@@ -4,12 +4,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.stereotype.Component;
 
 import com.qiyi.rpc.protocol.context.ClientBeanContext;
 import com.qiyi.rpc.protocol.context.server.ServerBeanContext;
 
-@Component
 public class QiyiApplicationListener implements ApplicationListener<ApplicationEvent> {
 
 	@Override
