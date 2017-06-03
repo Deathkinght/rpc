@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:qiyi="http://www.qiyi.com/schema/tags"  
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.qiyi.com/schema/tags http://www.qiyi.com/schema/tags/qiyis.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+<context:component-scan base-package="com.qiyi.rpc.*"/>  
+
+<qiyi:config id="config"  address="192.168.19.111:2181" sessionTimeoutMs="2000"  />
+
+<qiyi:client  id="userService" interfaceName="com.qiyi.rpc.demo.service.UserService" />
+
+</beans>

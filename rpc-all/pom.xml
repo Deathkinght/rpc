@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.qiyi.rpc</groupId>
+	<artifactId>rpc-all</artifactId>
+	<version>0.0.1</version>
+	<packaging>pom</packaging>
+
+	<name>rpc-all</name>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<logback.version>1.0.9</logback.version>
+		<mina.version>2.0.7</mina.version>
+		 <jackson.version>2.5.0</jackson.version>
+		<fastjson.version>1.2.3</fastjson.version>
+		<spring.version>4.1.4.RELEASE</spring.version>
+		<curator.version>2.7.1</curator.version>
+		<lang3.version>3.3</lang3.version>
+		<gson.version>2.3.1</gson.version>
+	</properties>
+
+	<dependencyManagement>
+
+		<dependencies>
+
+			<dependency>
+				<groupId>org.apache.mina</groupId>
+				<artifactId>mina-core</artifactId>
+				<type>jar</type>
+				<version>${mina.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.mina</groupId>
+				<artifactId>mina-example</artifactId>
+				<version>${mina.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.codehaus.jackson</groupId>
+				<artifactId>jackson-core-asl</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+
+
+			<dependency>
+				<groupId>org.codehaus.jackson</groupId>
+				<artifactId>jackson-mapper-asl</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+
+
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>${logback.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<dependency>
+				<groupId>org.javassist</groupId>
+				<artifactId>javassist</artifactId>
+				<version>3.19.0-GA</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>fastjson</artifactId>
+				<version>${fastjson.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-beans</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context-support</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+			  <groupId>org.apache.curator</groupId>
+			  <artifactId>curator-recipes</artifactId>
+			  <version>${curator.version}</version>
+			</dependency>
+			<dependency>
+			  <groupId>org.apache.curator</groupId>
+			  <artifactId>curator-framework</artifactId>
+			  <version>${curator.version}</version>
+			</dependency>
+		 <dependency>
+		  <groupId>org.apache.commons</groupId>
+		  <artifactId>commons-lang3</artifactId>
+		  <version>${lang3.version}</version>
+		</dependency>
+		<dependency>
+	 		 <groupId>com.google.code.gson</groupId>
+	  		 <artifactId>gson</artifactId>
+	 		 <version>${gson.version}</version>
+		</dependency>
+		</dependencies>
+
+	</dependencyManagement>
+
+
+	<build>
+		<finalName>rpc-all</finalName>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.felix</groupId>
+					<artifactId>maven-bundle-plugin</artifactId>
+					<extensions>true</extensions>
+				</plugin>
+				<plugin>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.1</version>
+					<configuration>
+						<source>1.8</source>
+						<target>1.8</target>
+						<encoding>UTF-8</encoding>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<!-- <modules> <module>qiyi-rpc-client</module> <module>qiyi-rpc-server</module> 
+		<module>qiyi-rpc-protocol</module> </modules> -->
+	<modules>
+		<module>rpc-core</module>
+		<module>rpc-demo-interface</module>
+		<module>rpc-demo-server</module>
+		<module>rpc-demo-client</module>
+		<module>aaa</module>
+	</modules>
+	
+	<distributionManagement>
+		<repository>
+			<id>nexus</id>
+			<name>Nexus Release Repository</name>
+			<url>http://192.168.1.110:8081/nexus/content/repositories/releases/</url>
+		</repository>
+<!-- 		<snapshotRepository>
+			<id>nexus-snapshots</id>
+			<name>nexus distribution snapshot repository</name>
+			<url>http://192.168.10.84:8081/nexus/content/repositories/snapshots/</url>
+		</snapshotRepository> -->
+	</distributionManagement>
+</project>
