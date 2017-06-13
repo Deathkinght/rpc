@@ -11,7 +11,7 @@
  	<!-- <bean id="userService" class="com.qiyi.rpc.server.test.UserServiceImpl"></bean> -->
 
 
-<qiyi:config id="config"  address="192.168.19.111:2181" sessionTimeoutMs="2000"  />
+<qiyi:config id="config"  address="localhost:2181" sessionTimeoutMs="2000"  />
 
 <qiyi:server  id="testQiyi" refer="userService"  interfaceName="com.qiyi.rpc.demo.service.UserService"  group="ab"/>
 

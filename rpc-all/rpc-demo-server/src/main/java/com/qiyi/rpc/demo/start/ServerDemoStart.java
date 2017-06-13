@@ -5,6 +5,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class ServerDemoStart {
 
+	@SuppressWarnings("resource")
 	public static void main(String[] args) {
 
 		System.out.println("start");

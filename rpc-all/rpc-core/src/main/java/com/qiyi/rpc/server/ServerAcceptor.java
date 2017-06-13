@@ -2,9 +2,7 @@ package com.qiyi.rpc.server;
 
 import java.io.IOException;
 import java.net.BindException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.mina.core.service.IoAcceptor;
@@ -14,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.qiyi.rpc.protocol.codec.ProtocolFactory;
+import com.qiyi.rpc.utils.AddrUtil;
 
 /**
  * 端口监听启动
@@ -40,7 +39,7 @@ public class ServerAcceptor {
 		
 		if(StringUtils.isBlank(ip))
 		{
-			ip = getLocalAddr();
+			ip = AddrUtil.getLocalAddr();
 		}
 		try {
 			bind(acceptor);
@@ -75,17 +74,6 @@ public class ServerAcceptor {
 	{
 		return provider;
 	}
-	
-	private  static String getLocalAddr()
-	{
-		try {
-			return  InetAddress.getLocalHost().getHostAddress();
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
 	
 	
 }

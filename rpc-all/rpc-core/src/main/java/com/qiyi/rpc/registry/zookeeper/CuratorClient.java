@@ -147,7 +147,7 @@ public class CuratorClient extends ZkRegistry {
 
 	@Override
 	public void create(String path, CreateMode mode) throws Exception {
-		client.create().withMode(mode).forPath(path);
+		client.create().withMode(mode).forPath(rootPath+path);
 	}
 	
 }

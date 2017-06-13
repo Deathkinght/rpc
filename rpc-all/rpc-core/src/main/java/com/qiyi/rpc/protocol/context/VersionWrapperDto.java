@@ -6,12 +6,18 @@ import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.zookeeper.CreateMode;
+import org.apache.zookeeper.KeeperException.NoNodeException;
+import org.apache.zookeeper.KeeperException.NodeExistsException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 import com.qiyi.rpc.client.pool.HandlerManager;
 import com.qiyi.rpc.registry.Registry;
 import com.qiyi.rpc.registry.zookeeper.CuratorClient;
 import com.qiyi.rpc.registry.zookeeper.bean.ZkRegistryBean;
+import com.qiyi.rpc.utils.AddrUtil;
+
 
 public class VersionWrapperDto {
 	
@@ -20,6 +26,8 @@ public class VersionWrapperDto {
 	private String version ; 
 	
 	private  volatile boolean init = false;
+	
+	private static Logger logger = LoggerFactory.getLogger(VersionWrapperDto.class);
 	
 	
 	public String getVersion() {
@@ -126,9 +134,42 @@ public class VersionWrapperDto {
 		
 		Collection<String> providers = null;
 		
+		String consumersPath = beanPath+"/consumers";
+		String providersPath = beanPath+"/providers";
+		boolean hasConsumer = false;
 		try{
-			providers = registry.getChildren(new ZkRegistryBean(beanPath));
-		}catch(Exception e)
+			
+			providers = registry.getChildren(new ZkRegistryBean(providersPath));
+			
+			
+			ZkRegistryBean regBean = new ZkRegistryBean(consumersPath,CreateMode.PERSISTENT);
+			registry.restry(regBean);
+			
+			hasConsumer = true;
+			
+			String consumerPath = consumersPath+"/"+AddrUtil.getLocalAddr();
+			ZkRegistryBean consuBean = new ZkRegistryBean(consumerPath,CreateMode.EPHEMERAL);
+			registry.restry(consuBean);
+			
+			
+		}catch(NodeExistsException e)
+		{
+			//consumers目录存在 
+			if(!hasConsumer){
+			String consumerPath = consumersPath+"/"+AddrUtil.getLocalAddr();
+			try{
+					ZkRegistryBean consuBean = new ZkRegistryBean(consumerPath,CreateMode.EPHEMERAL);
+					registry.restry(consuBean);
+				
+			}catch(NodeExistsException e2)
+			{
+				logger.warn("consumer node is exist:{}",consumerPath);
+			}
+			}
+			
+			
+		}
+		catch(NoNodeException  e)
 		{
 			e.printStackTrace();
 			if(checkProvider){
@@ -141,6 +182,8 @@ public class VersionWrapperDto {
 					e1.printStackTrace();
 				}
 			}));
+		}catch (Exception e) {
+			// TODO: handle exception
 		}
 		
 		initDto.putProviders(providers);
