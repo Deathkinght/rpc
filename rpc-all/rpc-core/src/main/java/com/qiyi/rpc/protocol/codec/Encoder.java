@@ -24,10 +24,6 @@ public class Encoder extends ProtocolEncoderAdapter {
         this.charset = charset;
     }
 
-    public Encoder() {
-        this.charset = Charset.forName("UTF-8");
-    }
-
     public void encode(IoSession session, Object message, ProtocolEncoderOutput out) throws Exception {
         IoBuffer buffer = IoBuffer.allocate(1024).setAutoExpand(true);
         Message msg = (Message) message;

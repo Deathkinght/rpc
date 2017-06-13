@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -49,7 +48,7 @@ public class ServerBeanContext {
 	/**发布者节点父目录 所以的发布者全部在此目录下创建子节点**/
 	private static final String PROVIDER_PATH = "/providers";
 	
-	private static final LinkedBlockingQueue<BeanNodeWrapperDto> publishQueue = new LinkedBlockingQueue<>();
+	//private static final LinkedBlockingQueue<BeanNodeWrapperDto> publishQueue = new LinkedBlockingQueue<>();
 	
 	private static AtomicInteger beanSize = new AtomicInteger(0);
 
@@ -58,6 +57,14 @@ public class ServerBeanContext {
 
 	private static volatile boolean isDone = false;
 
+
+	/**
+	 * 
+	 * @Date:2017年6月3日上午9:25:13
+	 * @param version
+	 * @param beanName
+	 * @param beanId
+	 */
 	public static synchronized void pubVersionBean(String version,String beanName,String beanId) {
 		versionBeans.add(new VersionBean(version,beanName,beanId));
 		beanSize.incrementAndGet();

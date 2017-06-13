@@ -70,7 +70,7 @@ public class Decoder extends CumulativeProtocolDecoder{
 		 int requestIdLength = buffer.getUnsignedShort();
 		 byte[] requestIdBytes = new byte[requestIdLength];
 		 buffer.get(requestIdBytes);
-		 String requestId = new String(requestIdBytes);
+		 String requestId = new String(requestIdBytes,charset);
 		 
 		 /**方法编号**/
 		 int methodSeq = buffer.getUnsignedShort();
@@ -93,7 +93,7 @@ public class Decoder extends CumulativeProtocolDecoder{
 		 message.setMessageId(requestId);
 		 message.setMseq(methodSeq);
 		 message.setBseq(beanSeq);
-		 message.setVersion(new String(versinBytes,"UTF-8"));
+		 message.setVersion(new String(versinBytes,charset));
 		 message.setBody(body);
 		 return message;
 		 
