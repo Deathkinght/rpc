@@ -1,16 +1,11 @@
 package com.qiyi.rpc.client.pool;
 
-import java.net.InetSocketAddress;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.mina.core.service.IoConnector;
-import org.apache.mina.filter.codec.ProtocolCodecFilter;
-import org.apache.mina.transport.socket.nio.NioSocketConnector;
-
 import com.qiyi.rpc.client.ClientHandler;
-import com.qiyi.rpc.protocol.codec.ProtocolFactory;
+import com.qiyi.rpc.client.Connector;
 
 /**
  * 
@@ -123,14 +118,6 @@ class HandlerPool {
 
 	private ClientHandler createClientHandler() {
 
-		ClientHandler clientHandler = new ClientHandler();
-
-		IoConnector connector = new NioSocketConnector();
-		connector.getSessionConfig().setBothIdleTime(3000);
-		connector.getFilterChain().addLast("codec", new ProtocolCodecFilter(new ProtocolFactory()));
-		connector.setHandler(clientHandler);
-		connector.connect(new InetSocketAddress(this.ip, this.port));
-		// connector.
-		return clientHandler;
+		return Connector.createClientHandler(this.ip, this.port);
 	}
 }

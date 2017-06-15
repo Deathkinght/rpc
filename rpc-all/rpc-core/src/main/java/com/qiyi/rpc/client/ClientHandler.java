@@ -2,11 +2,6 @@ package com.qiyi.rpc.client;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.mina.core.service.IoHandlerAdapter;
-import org.apache.mina.core.session.IoSession;
-
-import com.alibaba.fastjson.JSON;
-import com.qiyi.rpc.exception.BaseException;
 import com.qiyi.rpc.protocol.message.Message;
 
 /**
@@ -15,67 +10,27 @@ import com.qiyi.rpc.protocol.message.Message;
  * @author qiyi
  *
  */
-public class ClientHandler extends IoHandlerAdapter {
+public abstract class ClientHandler {
 
 	/**
 	 * ip port
 	 */
-	private String handlerKey;
+	protected String handlerKey;
 
 	/**
 	 * ip
 	 */
-	private String ip;
+	protected String ip;
 
 	/**
 	 * 端口
 	 */
-	private int port;
+	protected int port;
 
-	private IoSession session;
+	protected volatile boolean isActive = true;
 
-	private volatile boolean isActive = true;
+	protected ConcurrentHashMap<String, ClientFuture<Object>> futures = new ConcurrentHashMap<>();
 
-	private ConcurrentHashMap<String, ClientFuture<Object>> futures = new ConcurrentHashMap<>();
-
-	//private Charset charset ;
-	
-	
-	public ClientHandler() {
-		super();
-		//this.charset = Charset.forName("UTF-8");
-	}
-
-	@Override
-	public void sessionCreated(IoSession session) throws Exception {
-		super.sessionCreated(session);
-		this.session = session;
-	}
-
-	@Override
-	public void sessionClosed(IoSession session) throws Exception {
-		super.sessionClosed(session);
-		isActive = false;
-	}
-
-	@Override
-	public void messageReceived(IoSession session, Object obj) throws Exception {
-		// super.messageReceived(session, message);
-
-		Message msg = (Message) obj;
-	
-		ClientFuture<Object> future = futures.get(msg.getMessageId());
-		if(future == null)
-		{
-			throw new BaseException("future lossed");
-		}
-		
-		Object reponse =  JSON.parseObject(msg.getBody(), future.getReturnType());
-		
-		future.setResult(reponse);
-		
-		future.countDown();
-	}
 
 //	public Object getResponse(String msgId,long waiteTimes) throws InterruptedException, BaseException {
 //		
@@ -97,10 +52,12 @@ public class ClientHandler extends IoHandlerAdapter {
 	public  ClientFuture<Object> writeMessage(Message msg,Class<?> returnType) {
 		ClientFuture<Object> future = new ClientFuture<>(returnType);
 		futures.put(msg.getMessageId(), future);
-		session.write(msg);
+		doWrite(msg);
 		return future;
 	}
 
+	protected abstract void doWrite(Message msg);
+	
 	public String getHandlerKey() {
 		return handlerKey;
 	}

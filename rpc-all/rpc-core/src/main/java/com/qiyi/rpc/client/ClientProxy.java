@@ -34,7 +34,7 @@ public class ClientProxy extends QiyiProxy {
 		Message request = new Message(UUIDUtil.generateUUID(),wrapper.getMethodSeq(method),wrapper.getBeanSeq(),version,JSON.toJSONBytes(args));
 
 		ClientHandler handler = HandlerManager.getHandler(interfaceName);
-		 ClientFuture<Object> future = handler.writeMessage(request,returnType);
+		ClientFuture<Object> future = handler.writeMessage(request,returnType);
 
 		return future.getResult();
 	}

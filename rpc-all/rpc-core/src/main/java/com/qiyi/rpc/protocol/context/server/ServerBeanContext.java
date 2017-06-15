@@ -17,7 +17,7 @@ import com.qiyi.rpc.protocol.context.BeanNodeWrapperDto;
 import com.qiyi.rpc.registry.Registry;
 import com.qiyi.rpc.registry.zookeeper.CuratorClient;
 import com.qiyi.rpc.registry.zookeeper.bean.ZkRegistryBean;
-import com.qiyi.rpc.server.ServerAcceptor;
+import com.qiyi.rpc.server.Acceptor;
 import com.qiyi.rpc.spring.bean.VersionBean;
 import com.qiyi.rpc.utils.Function;
 import com.qiyi.rpc.utils.MethodUtil;
@@ -118,7 +118,7 @@ public class ServerBeanContext {
 		
 
 		//开启端口监听
-		ServerAcceptor.start();
+		Acceptor.acceptor();
 		
 		//发布到注册中心
 		pushToRegistry();
@@ -217,7 +217,7 @@ public class ServerBeanContext {
 	
 	private static void pushProvider(String servicePath)
 	{
-		String providerPath = servicePath+PROVIDER_PATH+"/"+ServerAcceptor.getProvider();
+		String providerPath = servicePath+PROVIDER_PATH+"/"+Acceptor.getProvider();
 		try {
 			registry.restry(new ZkRegistryBean(providerPath));
 		} catch (Exception e) {
