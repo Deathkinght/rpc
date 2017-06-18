@@ -5,7 +5,7 @@ package com.qiyi.rpc.spring.bean;
  * @author qiyi
  *
  */
-public class ServerFactoryBean extends QiyiFactoryBean{
+public class ServerFactoryBean extends QpcFactoryBean{
 
 	private Object refer;
 	

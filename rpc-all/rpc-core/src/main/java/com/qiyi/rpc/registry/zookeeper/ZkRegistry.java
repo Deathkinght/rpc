@@ -7,14 +7,14 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
 
-import com.qiyi.rpc.protocol.context.Callable;
 import com.qiyi.rpc.registry.Registry;
 import com.qiyi.rpc.registry.bean.RegistryBean;
 import com.qiyi.rpc.registry.zookeeper.bean.ZkRegistryBean;
+import com.qiyi.rpc.transport.protocol.context.Callable;
 
 public abstract class ZkRegistry implements Registry{
 
-	protected static String rootPath = "/qiyi_zk";
+	protected static String ROOT_PATH = "/qiyi_zk";
 
 	/**
 	 * 逗号

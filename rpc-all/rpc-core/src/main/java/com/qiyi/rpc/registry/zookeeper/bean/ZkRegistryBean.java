@@ -2,8 +2,8 @@ package com.qiyi.rpc.registry.zookeeper.bean;
 
 import org.apache.zookeeper.CreateMode;
 
-import com.qiyi.rpc.protocol.context.Callable;
 import com.qiyi.rpc.registry.bean.RegistryBean;
+import com.qiyi.rpc.transport.protocol.context.Callable;
 
 public class ZkRegistryBean extends RegistryBean{
 

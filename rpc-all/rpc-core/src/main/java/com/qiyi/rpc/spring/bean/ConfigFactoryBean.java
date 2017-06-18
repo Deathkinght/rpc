@@ -1,6 +1,6 @@
 package com.qiyi.rpc.spring.bean;
 
-public class ConfigFactoryBean extends QiyiFactoryBean {
+public class ConfigFactoryBean extends QpcFactoryBean {
 
 	/**
 	 * zookeeper ip

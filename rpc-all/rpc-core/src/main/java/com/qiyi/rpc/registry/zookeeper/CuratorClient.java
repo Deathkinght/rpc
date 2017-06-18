@@ -10,9 +10,9 @@ import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.Watcher.Event.EventType;
 import org.apache.zookeeper.data.Stat;
 
-import com.qiyi.rpc.protocol.context.Callable;
 import com.qiyi.rpc.registry.bean.RegistryBean;
 import com.qiyi.rpc.registry.zookeeper.bean.ZkRegistryBean;
+import com.qiyi.rpc.transport.protocol.context.Callable;
 
 /**
  * zookeeper客户端
@@ -47,7 +47,7 @@ public class CuratorClient extends ZkRegistry {
 		client = CuratorFrameworkFactory.builder().connectString(zkAddress).sessionTimeoutMs(defaultSessionTimeoutMs).retryPolicy(new ExponentialBackoffRetry(defaultRetrySleepTimeMs, defaultRetryMaxRetries)).build();
 		client.start();
 		try {
-			client.create().withMode(CreateMode.PERSISTENT).forPath(rootPath);
+			client.create().withMode(CreateMode.PERSISTENT).forPath(ROOT_PATH);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -57,7 +57,7 @@ public class CuratorClient extends ZkRegistry {
 	@Override
 	public List<String> getProviders(String path) throws Exception {
 
-		return client.getChildren().forPath(rootPath + path);
+		return client.getChildren().forPath(ROOT_PATH + path);
 
 	}
 
@@ -68,9 +68,9 @@ public class CuratorClient extends ZkRegistry {
 		try {
 			byte[] bytes = null;
 			if (stat != null) {
-				bytes = client.getData().storingStatIn(stat).forPath(rootPath + path);
+				bytes = client.getData().storingStatIn(stat).forPath(ROOT_PATH + path);
 			} else {
-				bytes = client.getData().forPath(rootPath + path);
+				bytes = client.getData().forPath(ROOT_PATH + path);
 			}
 
 			return bytes;
@@ -93,13 +93,13 @@ public class CuratorClient extends ZkRegistry {
 			}
 		};
 
-		return (T) client.getData().usingWatcher(watcher).forPath(rootPath + path);
+		return (T) client.getData().usingWatcher(watcher).forPath(ROOT_PATH + path);
 	}
 
 	@Override
 	public void create(String path) throws Exception {
 
-		client.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).forPath(rootPath + path);
+		client.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).forPath(ROOT_PATH + path);
 
 	}
 
@@ -110,7 +110,7 @@ public class CuratorClient extends ZkRegistry {
 
 	@Override
 	public void create(String path, byte[] initBytes, CreateMode mode) throws Exception {
-		client.create().creatingParentsIfNeeded().withMode(mode).forPath(rootPath + path, initBytes);
+		client.create().creatingParentsIfNeeded().withMode(mode).forPath(ROOT_PATH + path, initBytes);
 	}
 
 	@Override
@@ -119,14 +119,14 @@ public class CuratorClient extends ZkRegistry {
 		byte[] oldBytes = getData(path, oldStat);
 		byte[] newBytes = appendBytes(oldBytes, appendBytes);
 
-		Stat newStat = client.setData().withVersion(oldStat.getVersion()).forPath(rootPath + path, newBytes);
+		Stat newStat = client.setData().withVersion(oldStat.getVersion()).forPath(ROOT_PATH + path, newBytes);
 		return newStat;
 	}
 
 	@Override
 	public void setData(String path, byte[] data) throws Exception {
 
-		client.setData().forPath(rootPath + path, (byte[]) obj);
+		client.setData().forPath(ROOT_PATH + path, (byte[]) obj);
 	}
 
 	@Override
@@ -141,13 +141,13 @@ public class CuratorClient extends ZkRegistry {
 			}
 		};
 
-		client.getData().usingWatcher(watcher).forPath(rootPath + zkBean.getPath());
+		client.getData().usingWatcher(watcher).forPath(ROOT_PATH + zkBean.getPath());
 
 	}
 
 	@Override
 	public void create(String path, CreateMode mode) throws Exception {
-		client.create().withMode(mode).forPath(rootPath+path);
+		client.create().withMode(mode).forPath(ROOT_PATH+path);
 	}
 	
 }
