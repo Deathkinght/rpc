@@ -16,8 +16,6 @@ import com.qiyi.rpc.spring.QpcApplicationListener;
 import com.qiyi.rpc.spring.bean.ClientFactoryBean;
 import com.qiyi.rpc.spring.bean.ConfigFactoryBean;
 import com.qiyi.rpc.spring.bean.ServerFactoryBean;
-import com.qiyi.rpc.transport.client.ClientProxy;
-import com.qiyi.rpc.transport.protocol.context.BeanNodeWrapperDto;
 import com.qiyi.rpc.transport.protocol.context.client.ClientBeanContext;
 import com.qiyi.rpc.transport.protocol.context.server.ServerBeanContext;
 
@@ -72,7 +70,6 @@ public class QpcBeanParser extends AbstractSimpleBeanDefinitionParser {
 			
 			//TODO
 			ServerBeanContext.pubVersionBean(version, interfaceName,id);
-			ServerBeanContext.shouldPush(true);
 			
 			//QiyiApplicationListener.addBeanName(id);
 			builder.addPropertyValue("refer", refer);
@@ -106,16 +103,20 @@ public class QpcBeanParser extends AbstractSimpleBeanDefinitionParser {
 			
 			builder.addPropertyValue("interfaceName", interfaceName);
 			
+			String checkStr = element.getAttribute("check");
+			logger.debug("get check:{} from xml",checkStr);
+			boolean check = StringUtils.isBlank(checkStr)?false:Boolean.parseBoolean(checkStr);
+			
+			builder.addPropertyValue("check", check);
+			
 			version = StringUtils.isBlank(version)?Constant.DEFAULT_VERSION:version;
 			builder.addPropertyValue("version", version);
 			
 			try {
 
-				ServerBeanContext.shouldPoll(true);
-				BeanNodeWrapperDto wrapperDto = ClientBeanContext.initVersions(version, interfaceName);
-				
-				Object proxy = new ClientProxy(interfaceName,wrapperDto).getObject();
+				Object proxy = ClientBeanContext.initBeanProxy(version, interfaceName,check);
 				builder.addPropertyValue("proxy", proxy);
+				
 			} catch (IllegalArgumentException e1) {
 				e1.printStackTrace();
 			} catch (ClassNotFoundException e1) {

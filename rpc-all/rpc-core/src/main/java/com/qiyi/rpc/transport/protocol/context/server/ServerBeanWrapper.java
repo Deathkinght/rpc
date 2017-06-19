@@ -12,7 +12,11 @@ public class ServerBeanWrapper {
 	
 	private String interfaceName;
 	
+	private String beanId;
+	
 	private Object bean;
+	
+	private String version;
 	
 	private Map<Integer, ServerMethodWrapper> methodWrapper = new HashMap<>();
 	
@@ -50,14 +54,25 @@ public class ServerBeanWrapper {
 		super();
 	}
 	
-	public ServerBeanWrapper(int seq, String interfaceName, Object bean,BeanNodeWrapperDto beanNodeWrap) {
+	
+	
+	public ServerBeanWrapper(String interfaceName, String beanId, String version) {
 		super();
-		this.seq = seq;
 		this.interfaceName = interfaceName;
-		this.bean = bean;
-		this.beanNodeWrap = beanNodeWrap;
+		this.beanId = beanId;
+		this.version = version;
 	}
 
+	public ServerBeanWrapper(int seq,String version,String beanId, String interfaceName, Object bean,BeanNodeWrapperDto beanNodeWrap) {
+		super();
+		this.seq = seq;
+		this.version = version;
+		this.interfaceName = interfaceName;
+		this.bean = bean;
+		this.beanId = beanId;
+		this.beanNodeWrap = beanNodeWrap;
+	}
+	
 	public int getSeq() {
 		return seq;
 	}
@@ -70,9 +85,24 @@ public class ServerBeanWrapper {
 		return interfaceName;
 	}
 
-	public void setInterfaceName(String interfaceName) {
-		this.interfaceName = interfaceName;
+	public String getVersion() {
+		return version;
 	}
 
+	public String getBeanId() {
+		return beanId;
+	}
 
+	public Object getBean() {
+		return bean;
+	}
+
+	public void setBean(Object bean) {
+		this.bean = bean;
+	}
+
+	public void setBeanNodeWrap(BeanNodeWrapperDto beanNodeWrap) {
+		this.beanNodeWrap = beanNodeWrap;
+	}
+	
 }

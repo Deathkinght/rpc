@@ -2,6 +2,8 @@ package com.qiyi.rpc.transport.server.mina;
 
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 import com.qiyi.rpc.transport.protocol.context.server.ServerBeanContext;
@@ -14,6 +16,8 @@ import com.qiyi.rpc.transport.protocol.message.Message;
  */
 public class MinaDispatcherHandler extends IoHandlerAdapter {
 
+	private static final Logger logger = LoggerFactory.getLogger(MinaDispatcherHandler.class);
+	
 	@Override
 	public void messageReceived(IoSession session, Object message) throws Exception {
 		session.write(invoke(message));
@@ -59,9 +63,13 @@ public class MinaDispatcherHandler extends IoHandlerAdapter {
 		Message requestMsg = (Message) obj;
 
 		Object[] args = JSON.parseObject(requestMsg.getBody(),Object[].class);
-
-		System.out.println(JSON.toJSONString(requestMsg));
-		System.out.println("调用:method:" + requestMsg.getMseq() + ",messageId:" + requestMsg.getMessageId() + "args:" + JSON.toJSONString(args));
+		if(logger.isDebugEnabled())
+		{
+			logger.debug("receive message:{}",JSON.toJSONString(requestMsg));
+		}
+		
+		logger.info("调用:method:{},messageId:{}" ,requestMsg.getMseq(),requestMsg.getMessageId());
+		
 		Object invokeResult = ServerBeanContext.invokeMethod(requestMsg.getVersion(), requestMsg.getBseq(), requestMsg.getMseq(), args);
 		return new Message(requestMsg.getMessageId(), requestMsg.getMseq(), requestMsg.getBseq(), requestMsg.getVersion(), JSON.toJSONBytes(invokeResult));
 

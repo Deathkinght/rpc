@@ -1,1 +1,1 @@
-http\://www.qiyi.com/schema/tags=com.qiyi.rpc.spring.schema.QiyiNamespaceHandler
+http\://www.qiyi.com/schema/tags=com.qiyi.rpc.spring.schema.QpcNamespaceHandler

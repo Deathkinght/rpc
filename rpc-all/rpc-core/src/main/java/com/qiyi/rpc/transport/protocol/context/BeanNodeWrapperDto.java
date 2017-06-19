@@ -18,6 +18,8 @@ public class BeanNodeWrapperDto {
 
 	private transient  Collection<String> providers = new ArrayList<>();
 	
+	private transient boolean checkRegistry;
+	
 	public void putProviders(Collection<String> providers_)
 	{
 		providers.addAll(providers_);
@@ -42,10 +44,15 @@ public class BeanNodeWrapperDto {
 		super();
 	}
 	
-
 	public BeanNodeWrapperDto(String interfaceName) {
 		super();
 		this.interfaceName = interfaceName;
+	}
+
+	public BeanNodeWrapperDto(String interfaceName,boolean checkRegistry) {
+		super();
+		this.interfaceName = interfaceName;
+		this.checkRegistry = checkRegistry;
 	}
 
 	public BeanNodeWrapperDto(int beanSeq, Map<String, Integer> methodNameSeq) {
@@ -77,7 +84,10 @@ public class BeanNodeWrapperDto {
 	public void setInterfaceName(String interfaceName) {
 		this.interfaceName = interfaceName;
 	}
-	
+
+	public boolean isCheckRegistry() {
+		return checkRegistry;
+	}
 	
 
 }

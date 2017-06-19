@@ -49,20 +49,29 @@ public class ServerVersionWrapper {
 		this.version = version;
 	}
 
-	public ServerBeanWrapper initVersionBean(Integer beanSeq, String interfaceName, Object bean) {
 
-		ServerBeanWrapper wrap = context.get(beanSeq);
-
-		if (wrap == null) {
-			
-			BeanNodeWrapperDto nodeWrap = new BeanNodeWrapperDto(interfaceName);
-			wrap = new ServerBeanWrapper(beanSeq, interfaceName, bean,nodeWrap);
-			context.put(beanSeq, wrap);
-			
-			nodeWrapMap.put(beanSeq,nodeWrap);
-		}
-
-		return wrap;
+	public void putBean(Integer beanSeq,ServerBeanWrapper wrapper)
+	{
+		BeanNodeWrapperDto nodeWrap = new BeanNodeWrapperDto(wrapper.getInterfaceName());
+		wrapper.setBeanNodeWrap(nodeWrap);
+		context.put(beanSeq, wrapper);
+		nodeWrapMap.put(beanSeq,nodeWrap);
 	}
+	
+//	public ServerBeanWrapper initVersionBean(Integer beanSeq, String interfaceName, Object bean) {
+//
+//		ServerBeanWrapper wrap = context.get(beanSeq);
+//
+//		if (wrap == null) {
+//			
+//			BeanNodeWrapperDto nodeWrap = new BeanNodeWrapperDto(interfaceName);
+//			wrap = new ServerBeanWrapper(beanSeq,this.version,interfaceName, bean,nodeWrap);
+//			context.put(beanSeq, wrap);
+//			
+//			nodeWrapMap.put(beanSeq,nodeWrap);
+//		}
+//
+//		return wrap;
+//	}
 
 }

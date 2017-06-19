@@ -136,7 +136,7 @@ public class CuratorClient extends ZkRegistry {
 		
 		Watcher watcher = (e) -> {
 
-			if (e.getType() == EventType.NodeChildrenChanged || e.getType() == EventType.NodeDataChanged) {
+			if (e.getType() == EventType.NodeCreated ||e.getType() == EventType.NodeChildrenChanged || e.getType() == EventType.NodeDataChanged) {
 				zkBean.getCall().call();
 			}
 		};

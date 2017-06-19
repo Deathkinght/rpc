@@ -10,6 +10,7 @@ import org.apache.zookeeper.KeeperException.NoNodeException;
 import org.apache.zookeeper.KeeperException.NodeExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.qiyi.rpc.registry.Registry;
@@ -51,9 +52,9 @@ public class ClientVersionWrapper {
 	 * 初始化interface
 	 * @param interfaceName
 	 */
-	public  BeanNodeWrapperDto initInterface(String interfaceName)
+	public  BeanNodeWrapperDto initBeanNode(String interfaceName,boolean checkRegistry)
 	{
-		BeanNodeWrapperDto initDto = new BeanNodeWrapperDto(interfaceName);
+		BeanNodeWrapperDto initDto = new BeanNodeWrapperDto(interfaceName,checkRegistry);
 		nodeWrapperMap.put(interfaceName,initDto);
 		return initDto;
 	}
@@ -178,7 +179,7 @@ public class ClientVersionWrapper {
 			if(checkProvider){
 				throw new Exception("no provider");
 			}
-			registry.watch(new ZkRegistryBean(beanPath, CreateMode.PERSISTENT, ()->{
+			registry.watch(new ZkRegistryBean(providersPath, CreateMode.PERSISTENT, ()->{
 				try {
 					this.init(interfaceName, initDto, checkProvider);
 				} catch (Exception e1) {
@@ -189,9 +190,11 @@ public class ClientVersionWrapper {
 			// TODO: handle exception
 		}
 		
-		initDto.putProviders(providers);
-		
-		HandlerManager.init(interfaceName,providers);
+		if(CollectionUtils.isEmpty(providers))
+		{
+			initDto.putProviders(providers);
+			HandlerManager.init(interfaceName,providers);
+		}
 		
 		//init success
 		

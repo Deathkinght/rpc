@@ -2,6 +2,7 @@ package com.qiyi.rpc.spring;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
@@ -23,29 +24,20 @@ public class QpcApplicationListener implements ApplicationListener<ApplicationEv
 
 			ApplicationContext context = contextEvent.getApplicationContext();
 
-			/** 是否需要注册 **/
-			if (ServerBeanContext.shouldPush()) {
-
-				ServerBeanContext.pushBean((v)->{
+			/** 注册到注册中心 **/
+			try {
+				ServerBeanContext.pushBean((v) -> {
 					return context.getBean(v.getBeanId());
 				});
-				
-				try {
-					ServerBeanContext.init();
-				} catch (Exception e) {
-					e.printStackTrace();
-					//TODO 异常处理
-					
-				}
-
+			} catch (BeansException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 			
-			/**是否需要从注册中心获取**/
-			if (ServerBeanContext.shouldPoll()) {
-
-				ClientBeanContext.initAll();
+			/**从注册中心获取**/
+			ClientBeanContext.fetchFromRegistry();
 				
-			}
 
 			logger.info("=============================qpc started success=================================");
 		}

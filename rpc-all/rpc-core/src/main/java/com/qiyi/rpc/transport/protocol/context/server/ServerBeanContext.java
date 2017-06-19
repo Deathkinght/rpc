@@ -16,7 +16,6 @@ import com.alibaba.fastjson.JSON;
 import com.qiyi.rpc.registry.Registry;
 import com.qiyi.rpc.registry.zookeeper.CuratorClient;
 import com.qiyi.rpc.registry.zookeeper.bean.ZkRegistryBean;
-import com.qiyi.rpc.spring.bean.VersionBean;
 import com.qiyi.rpc.transport.protocol.context.BeanNodeWrapperDto;
 import com.qiyi.rpc.transport.server.Acceptor;
 import com.qiyi.rpc.utils.Function;
@@ -28,7 +27,7 @@ import com.qiyi.rpc.utils.MethodUtil;
  */
 public class ServerBeanContext {
 
-	private static volatile List<VersionBean> versionBeans = new ArrayList<>();
+	private static volatile List<ServerBeanWrapper> beanWrappers = new ArrayList<>();
 
 	private static final Map<String, ServerVersionWrapper> beanVersionMap = new HashMap<>();
 
@@ -38,19 +37,13 @@ public class ServerBeanContext {
 
 	private static Registry registry = null;
 	
-	private static boolean shouldPush = false;
-	
-	private static boolean shouldPoll = false;
+	private static AtomicInteger beanSize = new AtomicInteger(0);
 	
 	/**分布式锁 抢到锁的节点发布本节点信息到service目录下的Node下 其它的节点读取service目录的data值**/
 	private static final String LOCK_NAME = "/service_lock";
 	
 	/**发布者节点父目录 所以的发布者全部在此目录下创建子节点**/
 	private static final String PROVIDER_PATH = "/providers";
-	
-	//private static final LinkedBlockingQueue<BeanNodeWrapperDto> publishQueue = new LinkedBlockingQueue<>();
-	
-	private static AtomicInteger beanSize = new AtomicInteger(0);
 
 	private ServerBeanContext() {
 	}
@@ -66,13 +59,28 @@ public class ServerBeanContext {
 	 * @param beanId
 	 */
 	public static synchronized void pubVersionBean(String version,String beanName,String beanId) {
-		versionBeans.add(new VersionBean(version,beanName,beanId));
+		
+		beanWrappers.add(new ServerBeanWrapper(beanName, beanId, version));
+		
+		//versionBeans.add(new VersionBean(version,beanName,beanId));
 		beanSize.incrementAndGet();
 	}
 	
-	public static synchronized <T>  void pushBean(Function<VersionBean, Object> fun)
+	public static synchronized <T>  void pushBean(Function<ServerBeanWrapper, Object> fun) throws Exception
 	{
-		versionBeans.forEach(v->{
+		
+		if (isDone) {
+			return;
+		}
+		
+		if(beanWrappers.isEmpty())
+		{
+			return;
+		}
+
+		
+		//循环设置包装bean
+		beanWrappers.forEach(v->{
 			Object bean = null;
 			try {
 				bean = fun.apply(v);
@@ -81,39 +89,17 @@ public class ServerBeanContext {
 			}
 			v.setBean(bean);
 		});
+		
+		//发布到注册中心
+		push();
 	}
 	
-	public static void shouldPush(boolean push)
-	{
-		shouldPush = push;
-	}
-	
-	public static boolean shouldPush()
-	{
-		return shouldPush;
-	}
-	
-	public static boolean shouldPoll()
-	{
-		return shouldPoll;
-	}
-	
-	public static void shouldPoll(boolean poll)
-	{
-		shouldPoll = poll;
-	}
-	
-
-	public static synchronized void init() throws Exception {
-
-		if (isDone) {
-			return;
-		}
+	private static synchronized void push() throws Exception {
 
 		registry = CuratorClient.getInstance();
 
-		versionBeans.forEach(v->{
-			generateSeq(v);
+		beanWrappers.forEach(w->{
+			generateSeq(w);
 		});
 		
 
@@ -165,15 +151,15 @@ public class ServerBeanContext {
 	}
 
 	
-	private static synchronized void generateSeq(VersionBean v) {
+	private static synchronized void generateSeq(ServerBeanWrapper wrapper) {
 
-		Class<?> beanCla = v.getBean().getClass();
+		Class<?> beanCla = wrapper.getBean().getClass();
 
-		ServerVersionWrapper vWrap = new ServerVersionWrapper(v.getVersion());
-		beanVersionMap.put(v.getVersion(), vWrap);
+		ServerVersionWrapper vWrap = new ServerVersionWrapper(wrapper.getVersion());
+		beanVersionMap.put(wrapper.getVersion(), vWrap);
 		
-		
-		ServerBeanWrapper wrap = vWrap.initVersionBean(beanSeq, v.getInterfaceName(), v.getBean());
+		wrapper.setSeq(beanSeq);
+		vWrap.putBean(beanSeq, wrapper);
 		beanSeq++;
 		
 		/**
@@ -184,7 +170,7 @@ public class ServerBeanContext {
 		for (Method method : methods) {
 			String methodName = MethodUtil.getMethodNameWithType(method);
 			
-			wrap.putMethod(methodSeq, new ServerMethodWrapper(methodSeq, methodName, method));
+			wrapper.putMethod(methodSeq, new ServerMethodWrapper(methodSeq, methodName, method));
 
 			methodSeq++;
 		}
