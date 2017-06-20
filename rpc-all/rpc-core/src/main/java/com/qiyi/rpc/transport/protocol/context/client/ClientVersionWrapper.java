@@ -80,13 +80,13 @@ public class ClientVersionWrapper {
 		return nodeWrapperMap.get(interfaceName);
 	}
 	
-	public  synchronized void initAll()
+	public  synchronized void refreshAll()
 	{
 		if(!init)
 		{
 			nodeWrapperMap.forEach((k,v)->{
 					try {
-						init(k,v,false);
+						refreshBeanNode(k,v,false);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}	
@@ -98,7 +98,7 @@ public class ClientVersionWrapper {
 		
 	}
 	
-	private  void init(String interfaceName,BeanNodeWrapperDto initDto,boolean checkProvider) throws Exception
+	private  void refreshBeanNode(String interfaceName,BeanNodeWrapperDto initDto,boolean checkProvider) throws Exception
 	{
 		
 		Registry registry = CuratorClient.getInstance();
@@ -119,7 +119,7 @@ public class ClientVersionWrapper {
 			//registry.getClass().newInstance()
 			registry.watch(new ZkRegistryBean(beanPath, CreateMode.PERSISTENT, ()->{
 				try {
-					this.init(interfaceName, initDto, checkProvider);
+					this.refreshBeanNode(interfaceName, initDto, checkProvider);
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
@@ -181,7 +181,7 @@ public class ClientVersionWrapper {
 			}
 			registry.watch(new ZkRegistryBean(providersPath, CreateMode.PERSISTENT, ()->{
 				try {
-					this.init(interfaceName, initDto, checkProvider);
+					this.refreshBeanNode(interfaceName, initDto, checkProvider);
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}

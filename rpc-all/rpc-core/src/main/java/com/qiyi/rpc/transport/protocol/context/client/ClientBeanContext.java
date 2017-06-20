@@ -60,7 +60,7 @@ public class ClientBeanContext {
 		if(shouldPoll)
 		{
 			context.forEach((version,wrapper)->{
-				wrapper.initAll();
+				wrapper.refreshAll();
 			});			
 		}
 		
