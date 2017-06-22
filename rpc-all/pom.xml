@@ -14,7 +14,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<logback.version>1.0.9</logback.version>
 		<mina.version>2.0.7</mina.version>
-		 <jackson.version>1.9.13</jackson.version>
+		 <jackson.version>2.5.0</jackson.version>
 		<fastjson.version>1.2.3</fastjson.version>
 		<spring.version>4.1.4.RELEASE</spring.version>
 		<curator.version>2.7.1</curator.version>
