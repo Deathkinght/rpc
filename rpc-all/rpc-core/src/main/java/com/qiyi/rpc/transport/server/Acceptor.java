@@ -27,6 +27,11 @@ public abstract class Acceptor {
 	
 	public static void acceptor()
 	{
+		acceptor(port);
+	}
+	
+	public static void acceptor(int port)
+	{
 		
 		if(acceptor==null)
 		{
